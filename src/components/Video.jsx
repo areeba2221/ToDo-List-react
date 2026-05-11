@@ -8,9 +8,8 @@ const Video = () => {
     >
 
       <source
-        src="/src/assets/ChillhopWhiteOak.mp4"
-        type="video/mp4"
-      />
+        src="/ChillhopWhiteOak.mp4"
+        type="video/mp4"/>
 
     </video>
     );

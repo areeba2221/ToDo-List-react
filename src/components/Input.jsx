@@ -100,7 +100,7 @@ const InputTask = () => {
 
                 <button onClick={addTask}
                     className="w-16 h-16 rounded-full border bg-[#C4BABA5E] border-[#FFFFFFB2] ml-5 flex items-center justify-center" >
-                    <img src="src/assets/add.png" alt="add" />
+                    <img src="/add.png" alt="add" />
                 </button>
 
                 <div className="ml-20">
@@ -170,13 +170,13 @@ const InputTask = () => {
                                         onClick={() => handleEdit(task)}
                                         className="w-8 h-7 flex items-center justify-center ml-4 cursor-pointer" >
                                         <img
-                                            src="src/assets/edit (2).png" alt="edit"/>
+                                            src="/edit (2).png" alt="edit"/>
                                     </button>
                                     <button
                                         onClick={() => deleteTask(task.id)}
                                         className="w-8 h-7 flex items-center justify-center ml-4 cursor-pointer">
                                         <img
-                                            src="src/assets/delete box.png" alt="delete"/>
+                                            src="/delete box.png" alt="delete"/>
                                     </button>
 
                                 </>
@@ -185,13 +185,13 @@ const InputTask = () => {
                                      <button
                                         onClick={() => saveTask(task.id)}
                                         className="text-white text-3xl mr-4 cursor-pointer">
-                                        <img src="src/assets/circle.png"/>
+                                        <img src="/circle.png"/>
                                     </button>
 
                                     <button
                                         onClick={cancelEdit}
                                         className="text-white text-3xl cursor-pointer">
-                                        <img src="src/assets/delete.png"/>
+                                        <img src="/delete.png"/>
                                     </button>
                                 </>
                             )}
