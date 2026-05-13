@@ -1,7 +1,7 @@
 import axios from "axios";
 import swal from "sweetalert2";
 
-const API = "http://localhost:5000/api/todos";
+const API = `${import.meta.env.VITE_BACKEND_URL}/api/todos`;
 
 import { useState, useEffect } from "react";
 
