@@ -1,89 +1,156 @@
+import axios from "axios";
+import swal from "sweetalert2";
+
+const API = "http://localhost:5000/api/todos";
+
 import { useState, useEffect } from "react";
 
 const InputTask = () => {
 
-    const [tasks, setTasks] = useState(() => {
-    const saved = localStorage.getItem("tasks");
-    return saved ? JSON.parse(saved) : [];
-});
+    const [tasks, setTasks] = useState([]);
     const [inputValue, setInputValue] = useState("");
     const [editingId, setEditingId] = useState(null);
     const [editValue, setEditValue] = useState("");
     const [filter, setFilter] = useState("all");
 
+    //fetch tasks
     useEffect(() => {
-        localStorage.setItem("tasks", JSON.stringify(tasks));
-    }, [tasks]);
 
+        const fetchTasks = async () => {
+            try {
+                const res = await axios.get(API);
+                setTasks(res.data);
+            } catch (err) {
+                console.log(err);
+            }
+        };
 
-    const addTask = () => {
+        fetchTasks();
+
+    }, []);
+
+    //add tasks
+    const addTask = async () => {
         if (inputValue.trim() === "") {
             alert("Enter task first!");
             return;
         }
+        try {
+            const res = await axios.post(API, {
+                description: inputValue
+            });
 
-        setTasks([
-            
-            {
-                id: Date.now(),
-                text: inputValue,
-                completed: false
-            },
-            ...tasks
-        ]);
+            setTasks([res.data, ...tasks]);
+            setInputValue("");
 
-        setInputValue("");
+        } catch (err) {
+            console.log(err);
+        }
     };
 
+    //add enter key handle
     const handleKeyDown = (e) => {
-    if (e.key === "Enter") {
-        addTask();
-    }
-};
-    
-    const toggleTask = (id) => {
-        setTasks(
-            tasks.map(task =>
-                     task.id === id
-                    ? { ...task, completed: !task.completed }
-                    : task
-            )
-        );
+        if (e.key === "Enter") {
+            addTask();
+        }
     };
 
-    const deleteTask = (id) => {
-        setTasks(tasks.filter(task => task.id !== id));
+    //check task
+    const toggleTask = async (id) => {
+
+        const currentTask =
+            tasks.find(task => task.id === id);
+
+        if (!currentTask) return;
+
+        try {
+
+            const res = await axios.put(`${API}/${id}`, { completed: !currentTask.completed });
+
+            setTasks(
+                tasks.map(task =>
+                    task.id === id
+                        ? res.data : task
+                )
+            );
+
+        } catch (err) {
+
+            console.log(err);
+
+        }
     };
 
+    //delete tasks
+    const deleteTask = async (id) => {
+
+        const result = await swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!'
+        })
+        if(result.isConfirmed){
+            try {
+            await axios.delete(`${API}/${id}`)
+            setTasks(
+                tasks.filter(task => task.id !== id));
+        } catch (err) {
+            console.log(err);
+        }
+        }
+        
+    };
+
+    //edit tasks
     const handleEdit = (task) => {
         setEditingId(task.id);
-        setEditValue(task.text);
+        setEditValue(task.description);
     };
 
-    const saveTask = (id) => {
-        setTasks(
-            tasks.map(task =>
-                task.id === id
-                    ? { ...task, text: editValue }
-                    : task
-            ));
+    //edit save tasks
+    const saveTask = async (id) => {
 
-        setEditingId(null);
+    //     Swal.fire({
+    //     title: 'Save changes?',
+    //     text: 'Do you want to update this task description?',
+    //     icon: 'question',
+    //     showCancelButton: true,
+    //     confirmButtonColor: '#3085d6',
+    //     cancelButtonColor: '#d33',
+    //     confirmButtonText: 'Yes, save it!'
+    // })
+
+        try {
+
+            const res = await axios.put(`${API}/${id}`, { description: editValue });
+
+            setTasks(
+                tasks.map(task =>
+                    task.id === id ? res.data : task
+                ));
+
+            setEditingId(null);
+
+        } catch (err) {
+            console.log(err);
+        }
+
     };
 
+    //cancel edit tasks
     const cancelEdit = () => {
         setEditingId(null);
     };
 
-    const filteredTasks = tasks.filter((task) => {
+    //filter tasks
+    const filteredTasks = tasks.filter(task => {
 
-        if (filter === "completed") {
-            return task.completed;
-        }
-
-        if (filter === "pending") {
-            return !task.completed;
-        }
+        if (filter === "completed") return task.completed;
+        if (filter === "pending") return !task.completed;
 
         return true;
     });
@@ -129,7 +196,7 @@ const InputTask = () => {
 
             </div>
 
-            <ul className="relative flex flex-col items-center pt-4 mt-14  pb-5 h-[calc(100vh-300px)]
+            <ul className="relative wrap-anywhere flex flex-col items-center pt-4 mt-14  pb-5 h-[calc(100vh-300px)]
     overflow-y-auto overflow-x-hidden">
 
                 {filteredTasks.map((task) => (
@@ -144,17 +211,17 @@ const InputTask = () => {
 
                                 <input type="text" value={editValue}
                                     onChange={(e) => setEditValue(e.target.value)}
-                                    className="ml-5 flex-1 bg-transparent outline-none text-white text-[40px] font-[Baloo]"/>
+                                    className="ml-5 flex-1 bg-transparent outline-none text-white text-[40px] font-[Baloo]" />
 
                             ) : (
 
                                 <span
-                                    className={`ml-5 flex-1 text-[25px] leading-[100%] font-normal font-[Baloo]
+                                    className={`ml-5 flex w-full text-[25px] leading-[100%] font-normal font-[Baloo]
                                     ${task.completed
                                             ? "line-through text-white/40"
                                             : "text-white"
                                         }`}>
-                                    {task.text}
+                                    {task.description}
                                 </span>
 
                             )}
@@ -163,35 +230,35 @@ const InputTask = () => {
                                 <>
                                     <input type="checkbox" checked={task.completed}
                                         onChange={() => toggleTask(task.id)}
-                                        className="appearance-none h-8 w-8 border-4
+                                        className="appearance-none h-7 w-8 border-4
                                         border-white rounded-full checked:bg-white cursor-pointer"/>
 
                                     <button
                                         onClick={() => handleEdit(task)}
                                         className="w-8 h-7 flex items-center justify-center ml-4 cursor-pointer" >
                                         <img
-                                            src="/edit (2).png" alt="edit"/>
+                                            src="/edit (2).png" alt="edit" />
                                     </button>
                                     <button
                                         onClick={() => deleteTask(task.id)}
                                         className="w-8 h-7 flex items-center justify-center ml-4 cursor-pointer">
                                         <img
-                                            src="/delete box.png" alt="delete"/>
+                                            src="/delete box.png" alt="delete" />
                                     </button>
 
                                 </>
                             ) : (
                                 <>
-                                     <button
+                                    <button
                                         onClick={() => saveTask(task.id)}
                                         className="text-white text-3xl mr-4 cursor-pointer">
-                                        <img src="/circle.png"/>
+                                        <img src="/circle.png" />
                                     </button>
 
                                     <button
                                         onClick={cancelEdit}
                                         className="text-white text-3xl cursor-pointer">
-                                        <img src="/delete.png"/>
+                                        <img src="/delete.png" />
                                     </button>
                                 </>
                             )}
