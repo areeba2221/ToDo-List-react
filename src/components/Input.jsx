@@ -1,5 +1,7 @@
 import axios from "axios";
 import swal from "sweetalert2";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const API = `${import.meta.env.VITE_BACKEND_URL}/api/todos`;
 
@@ -32,7 +34,7 @@ const InputTask = () => {
     //add tasks
     const addTask = async () => {
         if (inputValue.trim() === "") {
-            alert("Enter task first!");
+            toast.error("Enter task first!");
             return;
         }
         try {
@@ -43,8 +45,11 @@ const InputTask = () => {
             setTasks([res.data, ...tasks]);
             setInputValue("");
 
+            toast.success("Add Tasks Successfully!");
+
         } catch (err) {
             console.log(err);
+            toast.error("Failed to AddTask!");
         }
     };
 
@@ -59,7 +64,7 @@ const InputTask = () => {
     const toggleTask = async (id) => {
 
         const currentTask =
-            tasks.find(task => task.id === id);
+            tasks.find(task => task._id === id);
 
         if (!currentTask) return;
 
@@ -69,14 +74,17 @@ const InputTask = () => {
 
             setTasks(
                 tasks.map(task =>
-                    task.id === id
+                    task._id === id
                         ? res.data : task
                 )
             );
 
+            toast.success("Update Task Successfuly!");
+
         } catch (err) {
 
             console.log(err);
+            toast.error("Failed to Updated!");
 
         }
     };
@@ -93,36 +101,30 @@ const InputTask = () => {
             cancelButtonColor: '#3085d6',
             confirmButtonText: 'Yes, delete it!'
         })
-        if(result.isConfirmed){
+        if (result.isConfirmed) {
             try {
-            await axios.delete(`${API}/${id}`)
-            setTasks(
-                tasks.filter(task => task.id !== id));
-        } catch (err) {
-            console.log(err);
+                await axios.delete(`${API}/${id}`)
+                setTasks(
+                    tasks.filter(task => task._id !== id));
+
+                toast.success("Deleted Task Successfuly!");
+
+            } catch (err) {
+                console.log(err);
+                toast.error("Failed to Deleted!");
+            }
         }
-        }
-        
+
     };
 
     //edit tasks
     const handleEdit = (task) => {
-        setEditingId(task.id);
+        setEditingId(task._id);
         setEditValue(task.description);
     };
 
     //edit save tasks
     const saveTask = async (id) => {
-
-    //     Swal.fire({
-    //     title: 'Save changes?',
-    //     text: 'Do you want to update this task description?',
-    //     icon: 'question',
-    //     showCancelButton: true,
-    //     confirmButtonColor: '#3085d6',
-    //     cancelButtonColor: '#d33',
-    //     confirmButtonText: 'Yes, save it!'
-    // })
 
         try {
 
@@ -130,13 +132,15 @@ const InputTask = () => {
 
             setTasks(
                 tasks.map(task =>
-                    task.id === id ? res.data : task
+                    task._id === id ? res.data : task
                 ));
 
             setEditingId(null);
+            toast.success("Edited Task Successfuly!");
 
         } catch (err) {
             console.log(err);
+            toast.error("Edited Task Failed!")
         }
 
     };
@@ -156,7 +160,16 @@ const InputTask = () => {
     });
 
     return (
+
+
         <>
+            <ToastContainer
+                position="top-right"
+                autoClose={3000}
+                closeOnClick
+                pauseOnHover
+                theme="dark"
+                />
             <div className="relative flex items-center pt-11 mx-auto px-5 max-w-286 w-full">
 
                 <input type="text" className="w-140 h-16 rounded-[7px] text-white text-2xl
@@ -201,22 +214,22 @@ const InputTask = () => {
 
                 {filteredTasks.map((task) => (
 
-                    <li key={task.id}
-                        className="max-w-155 rounded-[85px] bg-[#D9D9D980] border border-[#FFFFFFB2] py-2 mb-4 w-full
+                    <li key={task._id}
+                        className="max-w-155 rounded-[85px] py-2 bg-[#D9D9D980] border border-[#FFFFFFB2] mb-4 w-full
                         shadow-lg backdrop-blur-md">
 
                         <div className="flex items-center px-5">
 
-                            {editingId === task.id ? (
+                            {editingId === task._id ? (
 
                                 <input type="text" value={editValue}
                                     onChange={(e) => setEditValue(e.target.value)}
-                                    className="ml-5 flex-1 bg-transparent outline-none text-white text-[40px] font-[Baloo]" />
+                                    className="ml-5 flex-1  outline-none text-white text-[25px] font-[Baloo]" />
 
                             ) : (
 
                                 <span
-                                    className={`ml-5 flex w-full text-[25px] leading-[100%] font-normal font-[Baloo]
+                                    className={`ml-5 flex w-full text-[30px] leading-[100%] font-normal font-[Baloo]
                                     ${task.completed
                                             ? "line-through text-white/40"
                                             : "text-white"
@@ -226,10 +239,10 @@ const InputTask = () => {
 
                             )}
 
-                            {editingId !== task.id ? (
+                            {editingId !== task._id ? (
                                 <>
                                     <input type="checkbox" checked={task.completed}
-                                        onChange={() => toggleTask(task.id)}
+                                        onChange={() => toggleTask(task._id)}
                                         className="appearance-none h-7 w-8 border-4
                                         border-white rounded-full checked:bg-white cursor-pointer"/>
 
@@ -240,7 +253,7 @@ const InputTask = () => {
                                             src="/edit (2).png" alt="edit" />
                                     </button>
                                     <button
-                                        onClick={() => deleteTask(task.id)}
+                                        onClick={() => deleteTask(task._id)}
                                         className="w-8 h-7 flex items-center justify-center ml-4 cursor-pointer">
                                         <img
                                             src="/delete box.png" alt="delete" />
@@ -250,15 +263,15 @@ const InputTask = () => {
                             ) : (
                                 <>
                                     <button
-                                        onClick={() => saveTask(task.id)}
+                                        onClick={() => saveTask(task._id)}
                                         className="text-white text-3xl mr-4 cursor-pointer">
-                                        <img src="/circle.png" />
+                                        <img src="/circle.png" className="h-6" />
                                     </button>
 
                                     <button
                                         onClick={cancelEdit}
                                         className="text-white text-3xl cursor-pointer">
-                                        <img src="/delete.png" />
+                                        <img src="/delete.png" className="h-6" />
                                     </button>
                                 </>
                             )}
