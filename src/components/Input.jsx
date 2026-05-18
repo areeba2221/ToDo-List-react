@@ -5,6 +5,15 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const API = `${import.meta.env.VITE_BACKEND_URL}/api/todos`;
 
+const token = localStorage.getItem("token");
+
+
+const config = {
+    headers: {
+        Authorization: `Bearer ${token}`
+    }
+};
+
 import { useState, useEffect } from "react";
 
 const InputTask = () => {
@@ -20,8 +29,11 @@ const InputTask = () => {
 
         const fetchTasks = async () => {
             try {
-                const res = await axios.get(API);
-                setTasks(res.data);
+                const res = await axios.get(API, config);
+
+                console.log(res.data);
+
+                setTasks(res.data.data);
             } catch (err) {
                 console.log(err);
             }
@@ -40,9 +52,10 @@ const InputTask = () => {
         try {
             const res = await axios.post(API, {
                 description: inputValue
-            });
+            }, config
+            );
 
-            setTasks([res.data, ...tasks]);
+            setTasks([res.data.data, ...tasks]);
             setInputValue("");
 
             toast.success("Add Tasks Successfully!");
@@ -70,12 +83,12 @@ const InputTask = () => {
 
         try {
 
-            const res = await axios.put(`${API}/${id}`, { completed: !currentTask.completed });
+            const res = await axios.put(`${API}/${id}`, { completed: !currentTask.completed }, config);
 
             setTasks(
                 tasks.map(task =>
                     task._id === id
-                        ? res.data : task
+                        ? res.data.data : task
                 )
             );
 
@@ -84,9 +97,17 @@ const InputTask = () => {
         } catch (err) {
 
             console.log(err);
-            toast.error("Failed to Comleted!");
+            toast.error("Failed to Comlete!");
 
         }
+    };
+
+    const logout = () => {
+
+        localStorage.removeItem("token");
+
+        window.location.reload();
+
     };
 
     //delete tasks
@@ -103,7 +124,7 @@ const InputTask = () => {
         })
         if (result.isConfirmed) {
             try {
-                await axios.delete(`${API}/${id}`)
+                await axios.delete(`${API}/${id}`, config)
                 setTasks(
                     tasks.filter(task => task._id !== id));
 
@@ -111,7 +132,7 @@ const InputTask = () => {
 
             } catch (err) {
                 console.log(err);
-                toast.error("Failed to Deleted!");
+                toast.error("Failed to Delete!");
             }
         }
 
@@ -128,11 +149,16 @@ const InputTask = () => {
 
         try {
 
-            const res = await axios.put(`${API}/${id}`, { description: editValue });
+            if (editValue.trim() === "") {
+                toast.error("Task cannot be empty");
+                return;
+            }
+
+            const res = await axios.put(`${API}/${id}`, { description: editValue }, config);
 
             setTasks(
                 tasks.map(task =>
-                    task._id === id ? res.data : task
+                    task._id === id ? res.data.data : task
                 ));
 
             setEditingId(null);
@@ -151,13 +177,25 @@ const InputTask = () => {
     };
 
     //filter tasks
-    const filteredTasks = tasks.filter(task => {
+    // const filteredTasks = tasks.filter(task => {
 
-        if (filter === "completed") return task.completed;
-        if (filter === "pending") return !task.completed;
+    //     if (filter === "completed") return task.completed;
+    //     if (filter === "pending") return !task.completed;
 
-        return true;
-    });
+    //     return true;
+    // });
+
+    const filteredTasks = Array.isArray(tasks)
+        ? tasks.filter(task => {
+
+            if (filter === "completed") return task.completed;
+
+            if (filter === "pending") return !task.completed;
+
+            return true;
+
+        })
+        : [];
 
     return (
 
@@ -169,7 +207,7 @@ const InputTask = () => {
                 closeOnClick
                 pauseOnHover
                 theme="dark"
-                />
+            />
             <div className="relative flex items-center pt-11 mx-auto px-5 max-w-286 w-full">
 
                 <input type="text" className="w-140 h-16 rounded-[7px] text-white text-2xl
@@ -179,7 +217,7 @@ const InputTask = () => {
                     onKeyDown={handleKeyDown} />
 
                 <button onClick={addTask}
-                    className="w-16 h-16 rounded-full border bg-[#C4BABA5E] border-[#FFFFFFB2] ml-5 flex items-center justify-center" >
+                    className="w-19 h-14 rounded-full border bg-[#C4BABA5E] border-[#FFFFFFB2] ml-5 flex items-center justify-center" >
                     <img src="/add.png" alt="add" />
                 </button>
 
@@ -205,6 +243,15 @@ const InputTask = () => {
 
                     </select>
 
+                </div>
+
+                <div className="ml-10">
+                    <button
+                        onClick={logout}
+                        className="bg-[#C4BABA5E] border border-[#FFFFFFB2] shadow-lg backdrop-blur-md text-white px-4 py-2
+                        rounded-xl text-[24px] font-[Baloo] cursor-pointer hover:bg-[#C4564D] transition">
+                        Logout
+                    </button>
                 </div>
 
             </div>
