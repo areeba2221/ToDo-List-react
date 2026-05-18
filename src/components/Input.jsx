@@ -79,12 +79,12 @@ const InputTask = () => {
                 )
             );
 
-            toast.success("Update Task Successfuly!");
+            toast.success("Completed Task Successfuly!");
 
         } catch (err) {
 
             console.log(err);
-            toast.error("Failed to Updated!");
+            toast.error("Failed to Comleted!");
 
         }
     };
