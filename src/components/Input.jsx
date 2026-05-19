@@ -9,22 +9,31 @@ const API = `${import.meta.env.VITE_BACKEND_URL}/api/todos`;
 
 import { useState, useEffect } from "react";
 
-const InputTask = () => {
+const InputTask = ({ setToken }) => {
 
 
     const [tasks, setTasks] = useState([]);
     const [inputValue, setInputValue] = useState("");
+    const [inputError, setInputError] = useState("");
     const [editingId, setEditingId] = useState(null);
     const [editValue, setEditValue] = useState("");
+    const [editError, setEditError] = useState("");
     const [filter, setFilter] = useState("all");
 
-    const getConfig = () => {
+    // const getConfig = () => {
 
-        return {
+    //     return {
             
-            withCredentials: true
+    //         withCredentials: true
 
-        };
+    //     };
+    // };
+
+    const validateTask = (value) => {
+        if (!value.trim()) return "Task cannot be empty";
+        if (value.trim().length < 3) return "Task must be at least 3 characters";
+        if (value.trim().length > 200) return "Task must be under 200 characters";
+        return "";
     };
 
     //fetch tasks
@@ -32,95 +41,84 @@ const InputTask = () => {
 
         const fetchTasks = async () => {
             try {
-                const res = await axios.get(API, {
-                    withCredentials: true
-                });
-
-                console.log(res.data.data);
-
+                const res = await axios.get(API, { withCredentials: true});
                 setTasks(res.data.data);
             } catch (err) {
                 console.log(err);
             }
         };
-
         fetchTasks();
-
     }, []);
 
     //add tasks
     const addTask = async () => {
-        if (inputValue.trim() === "") {
-            toast.error("Enter task first!");
+        // if (inputValue.trim() === "") {
+        //     toast.error("Enter task first!");
+        //     return;
+        // }
+        const error = validateTask(inputValue);
+        if (error) {
+            setInputError(error);
             return;
         }
+        setInputError("");
         try {
             const res = await axios.post(API, 
-                {
-                description: inputValue
-            }, {
-                withCredentials: true
-            }
+                { description: inputValue},
+                { withCredentials: true }
             );
 
-            setTasks([res.data.data || res.data
-                , ...tasks]);
+            setTasks([res.data.data || res.data , ...tasks]);
             setInputValue("");
 
-            toast.success("Add Tasks Successfully!");
+            toast.success("Task added successfully!");
 
         } catch (err) {
             console.log(err);
-            toast.error("Failed to AddTask!");
+            toast.error("Failed to add task!");
         }
     };
 
     //add enter key handle
     const handleKeyDown = (e) => {
-        if (e.key === "Enter") {
-            addTask();
-        }
+        if (e.key === "Enter") 
+        addTask();
+        
+    };
+
+    const handleInputChange = (e) => {
+        setInputValue(e.target.value);
+        if (inputError) setInputError("");
     };
 
     //check task
     const toggleTask = async (id) => {
 
-        const currentTask =
-            tasks.find(task => task._id === id);
+        const currentTask = tasks.find(task => task._id === id);
 
         if (!currentTask) return;
 
         try {
 
-            const res = await axios.put(`${API}/${id}`, { completed: !currentTask.completed },
-                {
-                    withCredentials: true
-                }
+            const res = await axios.put(`${API}/${id}`, 
+                { completed: !currentTask.completed },
+                { withCredentials: true }
             );
 
-            setTasks(
-                tasks.map(task =>
-                    task._id === id
-                        ? res.data.data : task
-                )
-            );
-
-            toast.success("Completed Task Successfuly!");
+            setTasks( tasks.map(task => task._id === id ? res.data.data : task ) );
+            toast.success("Task updated successfully!");
 
         } catch (err) {
 
             console.log(err);
-            toast.error("Failed to Comlete!");
+            toast.error("Failed to update task!");
 
         }
     };
 
     const logout = () => {
-
         localStorage.removeItem("token");
-
-        window.location.reload();
-
+        setToken(null);
     };
 
     //delete tasks
@@ -137,15 +135,10 @@ const InputTask = () => {
         })
         if (result.isConfirmed) {
             try {
-                await axios.delete(`${API}/${id}`, 
-                    {
-                    withCredentials: true
-                }
-                )
-                setTasks(
-                    tasks.filter(task => task._id !== id));
+                await axios.delete(`${API}/${id}`,  { withCredentials: true })
+                setTasks( tasks.filter(task => task._id !== id));
 
-                toast.success("Deleted Task Successfuly!");
+                toast.success("Task deleted successfully!");
 
             } catch (err) {
                 console.log(err);
@@ -159,35 +152,33 @@ const InputTask = () => {
     const handleEdit = (task) => {
         setEditingId(task._id);
         setEditValue(task.description);
+        setEditError("");
     };
 
     //edit save tasks
     const saveTask = async (id) => {
+        const error = validateTask(editValue);
+        if (error) {
+            setEditError(error);
+            return;
+        }
+        setEditError("");
 
         try {
 
-            if (editValue.trim() === "") {
-                toast.error("Task cannot be empty");
-                return;
-            }
-
-            const res = await axios.put(`${API}/${id}`, { description: editValue }, 
-                {
-                    withCredentials: true
-                }
+            const res = await axios.put(`${API}/${id}`, 
+                { description: editValue }, 
+                { withCredentials: true }
             );
 
-            setTasks(
-                tasks.map(task =>
-                    task._id === id ? res.data.data : task
-                ));
+            setTasks( tasks.map(task => task._id === id ? res.data.data : task ));
 
             setEditingId(null);
-            toast.success("Edited Task Successfuly!");
+            toast.success("Task Edited Successfuly!");
 
         } catch (err) {
             console.log(err);
-            toast.error("Edited Task Failed!")
+            toast.error("Failed to edit task!")
         }
 
     };
@@ -195,16 +186,8 @@ const InputTask = () => {
     //cancel edit tasks
     const cancelEdit = () => {
         setEditingId(null);
+        setEditError("");
     };
-
-    //filter tasks
-    // const filteredTasks = tasks.filter(task => {
-
-    //     if (filter === "completed") return task.completed;
-    //     if (filter === "pending") return !task.completed;
-
-    //     return true;
-    // });
 
     const filteredTasks = Array.isArray(tasks)
         ? tasks.filter(task => {
@@ -232,11 +215,16 @@ const InputTask = () => {
             <div className="relative flex items-center pt-11 mx-auto px-5 max-w-286 w-full">
 
                 <input type="text"
+                    id="text"
                     className="w-140 h-16 rounded-[7px] text-white text-2xl
                     font-[Baloo] outline-none border bg-[#C4BABA5E] border-[#FFFFFFB2] ml-40 pl-4 shadow-lg backdrop-blur-md"
                     placeholder="Add a new task..." value={inputValue}
-                    onChange={(e) => setInputValue(e.target.value)}
+                    onChange={handleInputChange}
                     onKeyDown={handleKeyDown} />
+
+                    {inputError && (
+                            <p className="mt-1 text-sm text-red-400 pl-1">{inputError}</p>
+                        )}
 
                 <button onClick={addTask}
                     className="w-19 h-14 rounded-full border bg-[#C4BABA5E] border-[#FFFFFFB2] ml-5 flex items-center justify-center" >
@@ -246,6 +234,7 @@ const InputTask = () => {
                 <div className="ml-20">
 
                     <select
+                        
                         value={filter}
                         onChange={(e) => setFilter(e.target.value)}
                         className="focus:outline-none appearance-none font-[Baloo] text-white shadow-lg backdrop-blur-md
@@ -281,6 +270,12 @@ const InputTask = () => {
             <ul className="relative wrap-anywhere flex flex-col items-center pt-4 mt-14  pb-5 h-[calc(100vh-300px)]
     overflow-y-auto overflow-x-hidden">
 
+        {filteredTasks.length === 0 && (
+                    <p className="text-white text-2xl font-[Baloo] opacity-60 mt-10">
+                        No tasks found.
+                    </p>
+                )}
+
                 {filteredTasks.map((task) => (
 
                     <li key={task._id}
@@ -292,7 +287,10 @@ const InputTask = () => {
                             {editingId === task._id ? (
 
                                 <input type="text" value={editValue}
-                                    onChange={(e) => setEditValue(e.target.value)}
+                                    onChange={(e) => {setEditValue(e.target.value);
+                                        if (editError) setEditError("");
+                                        }}
+                                    
                                     className="ml-5 flex-1  outline-none text-white text-[25px] font-[Baloo]" />
 
                             ) : (
@@ -342,7 +340,12 @@ const InputTask = () => {
                                         className="text-white text-3xl cursor-pointer">
                                         <img src="/delete.png" className="h-6" />
                                     </button>
+
+                                
                                 </>
+                            )}
+                            {editingId === task._id && editError && (
+                                <p className="ml-5 mt-1 text-sm text-red-400">{editError}</p>
                             )}
                         </div>
                     </li>

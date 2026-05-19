@@ -1,32 +1,5 @@
-// import { useState } from "react";
-// import Video from './components/Video';
-// import Navbar from './components/Navbar';
-// import InputTask from "./components/Input";
-
-// // const token = localStorage.getItem("token");
-
-// // if (!token) {
-// //     return <h1>Please Login First</h1>;
-// // }
-
-// function App() {
-
-//   return (
-//     <div>
-
-//       <Video />
-//       <Navbar />
-//       <InputTask />
-
-//     </div>
-//   );
-// }
-
-// export default App;
-
-
-
 import { Routes, Route, Navigate } from "react-router-dom";
+import { useState } from "react";
 
 import Navbar from "./components/Navbar";
 import InputTask from "./components/Input";
@@ -37,7 +10,7 @@ import Register from "./pages/Register";
 
 const App = () => {
 
-    const token = localStorage.getItem("token");
+   const [token, setToken] = useState(localStorage.getItem("token"));
 
     return (
 
@@ -49,7 +22,7 @@ const App = () => {
             <Routes>
 
                 <Route path="/" element={ token ? <InputTask /> : <Navigate to="/login" />}/>
-                <Route path="/login" element={ !token ? <Login /> : <Navigate to="/" /> }/>
+                <Route path="/login" element={ !token ? <Login setToken={setToken} /> : <Navigate to="/" /> }/>
                 <Route path="/register" element={ !token ? <Register /> : <Navigate to="/" /> }/>
 
             </Routes>
