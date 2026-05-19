@@ -2,17 +2,14 @@ import { useState } from "react";
 
 import { registerUser } from "../api/auth";
 
-import {
-    Link,
-    useNavigate
-} from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Register = () => {
 
     const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
-        name: "",
+        username: "",
         email: "",
         password: ""
     });
@@ -33,7 +30,7 @@ const Register = () => {
         e.preventDefault();
 
         if (
-            !formData.name ||
+            !formData.username ||
             !formData.email ||
             !formData.password
         ) {
@@ -50,10 +47,7 @@ const Register = () => {
             const res =
                 await registerUser(formData);
 
-            localStorage.setItem(
-                "token",
-                res.data.token
-            );
+            res.cookie('token', token)
 
             alert("Register Successful");
 
@@ -95,17 +89,20 @@ const Register = () => {
                     {/* Name */}
                     <div>
 
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label 
+                        htmlFor="username"
+                        className="block text-sm font-medium text-gray-700 mb-1">
 
-                            Full Name
+                            UserName
 
                         </label>
 
                         <input
                             type="text"
-                            name="name"
+                            name="username"
+                            autoComplete="username"
                             placeholder="Enter your name"
-                            value={formData.name}
+                            value={formData.username}
                             onChange={handleChange}
                             className="w-full px-4 py-3 border border-gray-300 rounded-lg
                             focus:outline-none focus:ring-2 focus:ring-indigo-500"
@@ -113,10 +110,11 @@ const Register = () => {
 
                     </div>
 
-                    {/* Email */}
                     <div>
 
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label 
+                        htmlFor="email"
+                        className="block text-sm font-medium text-gray-700 mb-1">
 
                             Email Address
 
@@ -125,6 +123,7 @@ const Register = () => {
                         <input
                             type="email"
                             name="email"
+                            autoComplete="email"
                             placeholder="Enter your email"
                             value={formData.email}
                             onChange={handleChange}
@@ -134,10 +133,11 @@ const Register = () => {
 
                     </div>
 
-                    {/* Password */}
                     <div>
 
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label  
+                        htmlFor="password"
+                        className="block text-sm font-medium text-gray-700 mb-1">
 
                             Password
 
@@ -146,12 +146,12 @@ const Register = () => {
                         <input
                             type="password"
                             name="password"
+                            autoComplete="new-password"
                             placeholder="Enter your password"
                             value={formData.password}
                             onChange={handleChange}
                             className="w-full px-4 py-3 border border-gray-300 rounded-lg
-                            focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                        />
+                            focus:outline-none focus:ring-2 focus:ring-indigo-500"/>
 
                     </div>
 
@@ -171,15 +171,12 @@ const Register = () => {
 
                 </form>
 
-                {/* Login Link */}
                 <p className="text-center text-gray-600 mt-6">
 
                     Already have an account?
 
-                    <Link
-                        to="/login"
-                        className="text-indigo-600 font-semibold ml-2 hover:underline"
-                    >
+                    <Link to="/login"
+                        className="text-indigo-600 font-semibold ml-2 hover:underline">
                         Login
                     </Link>
 

@@ -2,10 +2,7 @@ import { useState } from "react";
 
 import { loginUser } from "../api/auth";
 
-import {
-    Link,
-    useNavigate
-} from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Login = () => {
 
@@ -85,36 +82,32 @@ const Login = () => {
 
                 </h2>
 
-                <form
-                    onSubmit={handleSubmit}
-                    className="space-y-5"
-                >
-
-                    {/* Email */}
+                <form onSubmit={handleSubmit} className="space-y-5">
                     <div>
 
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label 
+                        htmlFor="email"
+                        className="block text-sm font-medium text-gray-700 mb-1">
 
                             Email Address
 
                         </label>
 
-                        <input
-                            type="email"
-                            name="email"
-                            placeholder="Enter your email"
+                        <input type="email" name="email" 
+                        autoComplete="email"
+                        placeholder="Enter your email"
                             value={formData.email}
                             onChange={handleChange}
                             className="w-full px-4 py-3 border border-gray-300 rounded-lg
-                            focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                        />
+                            focus:outline-none focus:ring-2 focus:ring-indigo-500"/>
 
                     </div>
 
-                    {/* Password */}
                     <div>
 
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label 
+                        htmlFor="password"
+                        className="block text-sm font-medium text-gray-700 mb-1">
 
                             Password
 
@@ -123,42 +116,31 @@ const Login = () => {
                         <input
                             type="password"
                             name="password"
+                            autoComplete="current-password"
                             placeholder="Enter your password"
                             value={formData.password}
                             onChange={handleChange}
                             className="w-full px-4 py-3 border border-gray-300 rounded-lg
-                            focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                        />
+                            focus:outline-none focus:ring-2 focus:ring-indigo-500"/>
 
                     </div>
 
-                    {/* Button */}
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        className="w-full py-3 rounded-lg text-white bg-indigo-600
-                        hover:bg-indigo-700 transition duration-200 cursor-pointer"
-                    >
+                    <button type="submit" disabled={loading} 
+                    className="w-full py-3 rounded-lg text-white bg-indigo-600
+                     hover:bg-indigo-700 transition duration-200 cursor-pointer">
 
-                        {
-                            loading
-                                ? "Logging in..."
-                                : "Login"
-                        }
+                        { loading ? "Logging in..." : "Login" }
 
                     </button>
 
                 </form>
 
-                {/* Register Link */}
                 <p className="text-center text-gray-600 mt-6">
 
                     Don't have an account?
 
-                    <Link
-                        to="/register"
-                        className="text-indigo-600 font-semibold ml-2 hover:underline"
-                    >
+                    <Link to="/register"
+                        className="text-indigo-600 font-semibold ml-2 hover:underline" >
                         Register
                     </Link>
 

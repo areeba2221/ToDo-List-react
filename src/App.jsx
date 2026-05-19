@@ -35,7 +35,7 @@ import Video from './components/Video';
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 
-function App() {
+const App = () => {
 
     const token = localStorage.getItem("token");
 
@@ -49,8 +49,8 @@ function App() {
             <Routes>
 
                 <Route path="/" element={ token ? <InputTask /> : <Navigate to="/login" />}/>
-                <Route path="/login" element={<Login />}/>
-                <Route path="/register" element={<Register />}/>
+                <Route path="/login" element={ !token ? <Login /> : <Navigate to="/" /> }/>
+                <Route path="/register" element={ !token ? <Register /> : <Navigate to="/" /> }/>
 
             </Routes>
 

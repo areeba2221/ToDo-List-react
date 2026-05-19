@@ -1,12 +1,8 @@
 import axios from "axios";
+axios.defaults.withCredentials = true;
+const API = `${import.meta.env.VITE_BACKEND_URL}/api/auth`;
 
-const API =
-`${import.meta.env.VITE_BACKEND_URL}/api/auth`;
-
-export const registerUser = async (
-    userData
-) => {
-
+export const registerUser = async ( userData) => {
     return await axios.post(
         `${API}/register`,
         userData
@@ -14,10 +10,7 @@ export const registerUser = async (
 
 };
 
-export const loginUser = async (
-    userData
-) => {
-
+export const loginUser = async ( userData ) => {
     return await axios.post(
         `${API}/login`,
         userData

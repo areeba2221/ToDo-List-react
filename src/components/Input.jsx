@@ -5,18 +5,12 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const API = `${import.meta.env.VITE_BACKEND_URL}/api/todos`;
 
-const token = localStorage.getItem("token");
 
-
-const config = {
-    headers: {
-        Authorization: `Bearer ${token}`
-    }
-};
 
 import { useState, useEffect } from "react";
 
 const InputTask = () => {
+
 
     const [tasks, setTasks] = useState([]);
     const [inputValue, setInputValue] = useState("");
@@ -24,14 +18,25 @@ const InputTask = () => {
     const [editValue, setEditValue] = useState("");
     const [filter, setFilter] = useState("all");
 
+    const getConfig = () => {
+
+        return {
+            
+            withCredentials: true
+
+        };
+    };
+
     //fetch tasks
     useEffect(() => {
 
         const fetchTasks = async () => {
             try {
-                const res = await axios.get(API, config);
+                const res = await axios.get(API, {
+                    withCredentials: true
+                });
 
-                console.log(res.data);
+                console.log(res.data.data);
 
                 setTasks(res.data.data);
             } catch (err) {
@@ -50,12 +55,16 @@ const InputTask = () => {
             return;
         }
         try {
-            const res = await axios.post(API, {
+            const res = await axios.post(API, 
+                {
                 description: inputValue
-            }, config
+            }, {
+                withCredentials: true
+            }
             );
 
-            setTasks([res.data.data, ...tasks]);
+            setTasks([res.data.data || res.data
+                , ...tasks]);
             setInputValue("");
 
             toast.success("Add Tasks Successfully!");
@@ -83,7 +92,11 @@ const InputTask = () => {
 
         try {
 
-            const res = await axios.put(`${API}/${id}`, { completed: !currentTask.completed }, config);
+            const res = await axios.put(`${API}/${id}`, { completed: !currentTask.completed },
+                {
+                    withCredentials: true
+                }
+            );
 
             setTasks(
                 tasks.map(task =>
@@ -124,7 +137,11 @@ const InputTask = () => {
         })
         if (result.isConfirmed) {
             try {
-                await axios.delete(`${API}/${id}`, config)
+                await axios.delete(`${API}/${id}`, 
+                    {
+                    withCredentials: true
+                }
+                )
                 setTasks(
                     tasks.filter(task => task._id !== id));
 
@@ -154,7 +171,11 @@ const InputTask = () => {
                 return;
             }
 
-            const res = await axios.put(`${API}/${id}`, { description: editValue }, config);
+            const res = await axios.put(`${API}/${id}`, { description: editValue }, 
+                {
+                    withCredentials: true
+                }
+            );
 
             setTasks(
                 tasks.map(task =>
@@ -210,7 +231,8 @@ const InputTask = () => {
             />
             <div className="relative flex items-center pt-11 mx-auto px-5 max-w-286 w-full">
 
-                <input type="text" className="w-140 h-16 rounded-[7px] text-white text-2xl
+                <input type="text"
+                    className="w-140 h-16 rounded-[7px] text-white text-2xl
                     font-[Baloo] outline-none border bg-[#C4BABA5E] border-[#FFFFFFB2] ml-40 pl-4 shadow-lg backdrop-blur-md"
                     placeholder="Add a new task..." value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
