@@ -4,7 +4,6 @@ import { useState } from "react";
 import Navbar from "./components/Navbar";
 import InputTask from "./components/Input";
 import Video from './components/Video';
-
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 
@@ -21,9 +20,9 @@ const App = () => {
 
             <Routes>
 
-                <Route path="/" element={ token ? <InputTask /> : <Navigate to="/login" />}/>
+                <Route path="/" element={ token ? <InputTask setToken={setToken} /> : <Navigate to="/login" />}/>
                 <Route path="/login" element={ !token ? <Login setToken={setToken} /> : <Navigate to="/" /> }/>
-                <Route path="/register" element={ !token ? <Register /> : <Navigate to="/" /> }/>
+                <Route path="/register" element={ !token ? <Register setToken={setToken} /> : <Navigate to="/" /> }/>
 
             </Routes>
 
