@@ -297,22 +297,32 @@ const InputTask = ({ setToken }) => {
 
                             {editingId !== task._id ? (
                                 <>
-                                    <input type="checkbox" checked={task.completed}
+                                    {/* <input type="checkbox" checked={task.completed}
                                         onChange={() => toggleTask(task._id)}
                                         className="appearance-none h-7 w-8 border-4
-                                        border-white rounded-full checked:bg-white cursor-pointer"/>
-
+                                        border-white rounded-full checked:bg-white cursor-pointer"/> */}
+                                    <div
+                                        onClick={() => toggleTask(task._id)}
+                                        className="cursor-pointer flex items-center justify-center h-7 w-7" >
+                                        {task.completed ? (
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="white" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                <circle cx="12" cy="12" r="10" />
+                                            </svg>
+                                        ) : (
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                <circle cx="12" cy="12" r="10" />
+                                            </svg>
+                                        )}
+                                    </div>
                                     <button
                                         onClick={() => handleEdit(task)}
                                         className="w-8 h-7 flex items-center justify-center ml-4 cursor-pointer" >
-                                        <img
-                                            src="/edit (2).png" alt="edit" />
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-square-pen-icon lucide-square-pen"><path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" /><path d="M18.375 2.625a1 1 0 0 1 3 3l-9.013 9.014a2 2 0 0 1-.853.505l-2.873.84a.5.5 0 0 1-.62-.62l.84-2.873a2 2 0 0 1 .506-.852z" /></svg>
                                     </button>
                                     <button
                                         onClick={() => deleteTask(task._id)}
                                         className="w-8 h-7 flex items-center justify-center ml-4 cursor-pointer">
-                                        <img
-                                            src="/delete box.png" alt="delete" />
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash-icon lucide-trash"><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" /><path d="M3 6h18" /><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></svg>
                                     </button>
 
                                 </>
@@ -321,13 +331,13 @@ const InputTask = ({ setToken }) => {
                                     <button
                                         onClick={() => saveTask(task._id)}
                                         className="text-white text-3xl mr-4 cursor-pointer">
-                                        <img src="/circle.png" className="h-6" />
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check-icon lucide-check"><path d="M20 6 9 17l-5-5" /></svg>
                                     </button>
 
                                     <button
                                         onClick={cancelEdit}
                                         className="text-white text-3xl cursor-pointer">
-                                        <img src="/delete.png" className="h-6" />
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x-icon lucide-x"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
                                     </button>
 
 
