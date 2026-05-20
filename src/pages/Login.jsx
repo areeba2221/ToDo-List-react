@@ -2,7 +2,7 @@ import { useState } from "react";
 import { loginUser } from "../api/auth";
 import { Link, useNavigate } from "react-router-dom";
 
-const Login = ({ setToken }) => {
+const Login = ({ setIsAuthenticated }) => {
     const navigate = useNavigate();
 
     const [formData, setFormData] = useState({ email: "", password: "" });
@@ -41,8 +41,7 @@ const Login = ({ setToken }) => {
         try {
             setLoading(true);
             const res = await loginUser(formData);
-            localStorage.setItem("token", res.data.token);
-            setToken(res.data.token);
+            setIsAuthenticated(true);
             navigate('/');
         } catch (err) {
             console.log(err);

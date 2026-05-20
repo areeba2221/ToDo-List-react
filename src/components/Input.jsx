@@ -5,11 +5,11 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const API = `${import.meta.env.VITE_BACKEND_URL}/api/todos`;
 
-
+import { logoutUser } from "../api/auth";
 
 import { useState, useEffect } from "react";
 
-const InputTask = ({ setToken }) => {
+const InputTask = ({ setIsAuthenticated }) => {
 
     const [isLoading, setIsLoading] = useState(true);
     const [tasks, setTasks] = useState([]);
@@ -107,11 +107,15 @@ const InputTask = ({ setToken }) => {
         }
     };
 
-
-    const logout = () => {
-        localStorage.removeItem("token");
-        setToken(null);
-    };
+    const logout = async () => {
+    try {
+        await logoutUser();          
+        setIsAuthenticated(false);   
+    } catch (err) {
+        console.log(err);
+        setIsAuthenticated(false); 
+    }
+};
 
     //delete tasks
     const deleteTask = async (id) => {
@@ -215,8 +219,11 @@ const InputTask = ({ setToken }) => {
                     onKeyDown={handleKeyDown} />
 
                 <button onClick={addTask}
-                    className="w-19 h-14 rounded-full border bg-[#C4BABA5E] border-[#FFFFFFB2] ml-5 flex items-center justify-center" >
-                    <img src="/add.png" alt="add" />
+                    className=" rounded-full border bg-[#C4BABA5E] border-[#FFFFFFB2] ml-5 flex items-center justify-center" >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 24 24" 
+                    fill="none" stroke="white" stroke-width="2" strokeLinecap="round" 
+                    stroke-linejoin="round" class="lucide lucideCirclePlus-icon lucideCirclePlus">
+                        <circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/></svg>
                 </button>
 
                 <div className="ml-20">
@@ -305,11 +312,15 @@ const InputTask = ({ setToken }) => {
                                         onClick={() => toggleTask(task._id)}
                                         className="cursor-pointer flex items-center justify-center h-7 w-7" >
                                         {task.completed ? (
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="white" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                             viewBox="0 0 24 24" fill="white" stroke="white" 
+                                             strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                                 <circle cx="12" cy="12" r="10" />
                                             </svg>
                                         ) : (
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                             viewBox="0 0 24 24" fill="none" stroke="white" 
+                                             strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                                 <circle cx="12" cy="12" r="10" />
                                             </svg>
                                         )}
@@ -317,12 +328,25 @@ const InputTask = ({ setToken }) => {
                                     <button
                                         onClick={() => handleEdit(task)}
                                         className="w-8 h-7 flex items-center justify-center ml-4 cursor-pointer" >
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-square-pen-icon lucide-square-pen"><path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" /><path d="M18.375 2.625a1 1 0 0 1 3 3l-9.013 9.014a2 2 0 0 1-.853.505l-2.873.84a.5.5 0 0 1-.62-.62l.84-2.873a2 2 0 0 1 .506-.852z" /></svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" 
+                                        viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" 
+                                        stroke-linecap="round" strokeLinejoin="round" 
+                                        class="lucide lucideSquarePenIcon lucideSquare-pen">
+                                        <path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                                        <path d="M18.375 2.625a1 1 0 0 1 3 3l-9.013 9.014a2 2 0 0 1-.853.505l-2.873.84a.5.5 0 0 1-.62-.62l.84-2.873a2 2 0 0 1 .506-.852z" />
+                                        </svg>
                                     </button>
                                     <button
                                         onClick={() => deleteTask(task._id)}
                                         className="w-8 h-7 flex items-center justify-center ml-4 cursor-pointer">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash-icon lucide-trash"><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" /><path d="M3 6h18" /><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                         viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" 
+                                         stroke-linecap="round" strokeLinejoin="round" 
+                                         class="lucide lucideTrash-icon lucideTrash">
+                                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+                                            <path d="M3 6h18" />
+                                            <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                                            </svg>
                                     </button>
 
                                 </>
@@ -331,13 +355,21 @@ const InputTask = ({ setToken }) => {
                                     <button
                                         onClick={() => saveTask(task._id)}
                                         className="text-white text-3xl mr-4 cursor-pointer">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check-icon lucide-check"><path d="M20 6 9 17l-5-5" /></svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" 
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" 
+                                        stroke-width="2" strokeLinecap="round" strokeLinejoin="round" 
+                                        class="lucide lucideCheckIcon lucideCheck">
+                                            <path d="M20 6 9 17l-5-5" /></svg>
                                     </button>
 
                                     <button
                                         onClick={cancelEdit}
                                         className="text-white text-3xl cursor-pointer">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x-icon lucide-x"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" 
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" 
+                                        stroke-width="2" stroke-linecap="round" 
+                                        stroke-linejoin="round" class="lucide lucide-x-icon lucide-x">
+                                            <path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
                                     </button>
 
 

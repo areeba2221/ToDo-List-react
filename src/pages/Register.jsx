@@ -2,7 +2,9 @@ import { useState } from "react";
 import { registerUser } from "../api/auth";
 import { Link, useNavigate } from "react-router-dom";
 
-const Register = () => {
+
+
+const Register = (setIsAuthenticated) => {
     const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
@@ -57,6 +59,7 @@ const Register = () => {
             await registerUser(dataToSend);
 
             alert("Register Successful");
+            setIsAuthenticated(true);
             navigate('/');
 
         } catch (err) {
