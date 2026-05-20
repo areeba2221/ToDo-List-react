@@ -11,7 +11,6 @@ import { useState, useEffect } from "react";
 
 const InputTask = ({ setToken }) => {
 
-
     const [tasks, setTasks] = useState([]);
     const [inputValue, setInputValue] = useState("");
     const [inputError, setInputError] = useState("");
@@ -20,15 +19,7 @@ const InputTask = ({ setToken }) => {
     const [editError, setEditError] = useState("");
     const [filter, setFilter] = useState("all");
 
-    // const getConfig = () => {
-
-    //     return {
-            
-    //         withCredentials: true
-
-    //     };
-    // };
-
+    //validation of task
     const validateTask = (value) => {
         if (!value.trim()) return "Task cannot be empty";
         if (value.trim().length < 3) return "Task must be at least 3 characters";
@@ -45,6 +36,7 @@ const InputTask = ({ setToken }) => {
                 setTasks(res.data.data);
             } catch (err) {
                 console.log(err);
+                toast.error("Failed to load tasks!");
             }
         };
         fetchTasks();
@@ -52,13 +44,9 @@ const InputTask = ({ setToken }) => {
 
     //add tasks
     const addTask = async () => {
-        // if (inputValue.trim() === "") {
-        //     toast.error("Enter task first!");
-        //     return;
-        // }
         const error = validateTask(inputValue);
         if (error) {
-            setInputError(error);
+            toast.error(error);
             return;
         }
         setInputError("");
@@ -70,9 +58,7 @@ const InputTask = ({ setToken }) => {
 
             setTasks([res.data.data || res.data , ...tasks]);
             setInputValue("");
-
             toast.success("Task added successfully!");
-
         } catch (err) {
             console.log(err);
             toast.error("Failed to add task!");
@@ -93,26 +79,18 @@ const InputTask = ({ setToken }) => {
 
     //check task
     const toggleTask = async (id) => {
-
         const currentTask = tasks.find(task => task._id === id);
-
         if (!currentTask) return;
-
         try {
-
             const res = await axios.put(`${API}/${id}`, 
                 { completed: !currentTask.completed },
                 { withCredentials: true }
             );
-
             setTasks( tasks.map(task => task._id === id ? res.data.data : task ) );
             toast.success("Task updated successfully!");
-
         } catch (err) {
-
             console.log(err);
             toast.error("Failed to update task!");
-
         }
     };
 
@@ -142,7 +120,7 @@ const InputTask = ({ setToken }) => {
 
             } catch (err) {
                 console.log(err);
-                toast.error("Failed to Delete!");
+                toast.error("Failed to Delete Task!");
             }
         }
 
@@ -159,7 +137,7 @@ const InputTask = ({ setToken }) => {
     const saveTask = async (id) => {
         const error = validateTask(editValue);
         if (error) {
-            setEditError(error);
+            toast.error(error);
             return;
         }
         setEditError("");
@@ -219,12 +197,8 @@ const InputTask = ({ setToken }) => {
                     className="w-140 h-16 rounded-[7px] text-white text-2xl
                     font-[Baloo] outline-none border bg-[#C4BABA5E] border-[#FFFFFFB2] ml-40 pl-4 shadow-lg backdrop-blur-md"
                     placeholder="Add a new task..." value={inputValue}
-                    onChange={handleInputChange}
+                    onChange={(e) => setInputValue(e.target.value)}
                     onKeyDown={handleKeyDown} />
-
-                    {inputError && (
-                            <p className="mt-1 text-sm text-red-400 pl-1">{inputError}</p>
-                        )}
 
                 <button onClick={addTask}
                     className="w-19 h-14 rounded-full border bg-[#C4BABA5E] border-[#FFFFFFB2] ml-5 flex items-center justify-center" >
@@ -343,9 +317,6 @@ const InputTask = ({ setToken }) => {
 
                                 
                                 </>
-                            )}
-                            {editingId === task._id && editError && (
-                                <p className="ml-5 mt-1 text-sm text-red-400">{editError}</p>
                             )}
                         </div>
                     </li>
