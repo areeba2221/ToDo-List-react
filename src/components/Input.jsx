@@ -60,7 +60,7 @@ const InputTask = ({ setToken }) => {
                 { withCredentials: true }
             );
 
-            setTasks([ ...tasks, res.data.data || res.data]);
+            setTasks([ res.data.data || res.data ,...tasks]);
             setInputValue("");
             toast.success("Task added successfully!");
         } catch (err) {
