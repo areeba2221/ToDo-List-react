@@ -11,6 +11,7 @@ import { useState, useEffect } from "react";
 
 const InputTask = ({ setToken }) => {
 
+    const [isLoading, setIsLoading] = useState(true);
     const [tasks, setTasks] = useState([]);
     const [inputValue, setInputValue] = useState("");
     const [inputError, setInputError] = useState("");
@@ -32,11 +33,14 @@ const InputTask = ({ setToken }) => {
 
         const fetchTasks = async () => {
             try {
+                 setIsLoading(true);
                 const res = await axios.get(API, { withCredentials: true});
                 setTasks(res.data.data);
             } catch (err) {
                 console.log(err);
                 toast.error("Failed to load tasks!");
+            } finally {
+                setIsLoading(false);
             }
         };
         fetchTasks();
@@ -56,7 +60,7 @@ const InputTask = ({ setToken }) => {
                 { withCredentials: true }
             );
 
-            setTasks([res.data.data || res.data , ...tasks]);
+            setTasks([ ...tasks, res.data.data || res.data]);
             setInputValue("");
             toast.success("Task added successfully!");
         } catch (err) {
@@ -79,20 +83,28 @@ const InputTask = ({ setToken }) => {
 
     //check task
     const toggleTask = async (id) => {
-        const currentTask = tasks.find(task => task._id === id);
-        if (!currentTask) return;
-        try {
-            const res = await axios.put(`${API}/${id}`, 
-                { completed: !currentTask.completed },
-                { withCredentials: true }
-            );
-            setTasks( tasks.map(task => task._id === id ? res.data.data : task ) );
-            toast.success("Task updated successfully!");
-        } catch (err) {
-            console.log(err);
-            toast.error("Failed to update task!");
-        }
-    };
+    const currentTask = tasks.find(task => task._id === id);
+    if (!currentTask) return;
+    const updatedStatus = !currentTask.completed;
+    setTasks(tasks.map(task => 
+        task._id === id ? { ...task, completed: updatedStatus } : task
+    ));
+    toast.success("Task updated successfully!");
+    try {
+        const res = await axios.put(`${API}/${id}`, 
+            { completed: updatedStatus },
+            { withCredentials: true }
+        );
+        setTasks(tasks.map(task => task._id === id ? res.data.data : task));
+    } catch (err) {
+        console.log(err);
+        setTasks(tasks.map(task => 
+            task._id === id ? { ...task, completed: currentTask.completed } : task
+        ));
+        toast.error("Failed to update task!");
+    }
+};
+
 
     const logout = () => {
         localStorage.removeItem("token");
