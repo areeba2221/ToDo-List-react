@@ -33,9 +33,11 @@ const InputTask = ({ setToken }) => {
 
         const fetchTasks = async () => {
             try {
-                 setIsLoading(true);
-                const res = await axios.get(API, { withCredentials: true});
-                setTasks(res.data.data);
+                setIsLoading(true);
+                const res = await axios.get(API, { withCredentials: true });
+                setTasks(
+                    [...(res.data.data)].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+                );
             } catch (err) {
                 console.log(err);
                 toast.error("Failed to load tasks!");
@@ -55,12 +57,12 @@ const InputTask = ({ setToken }) => {
         }
         setInputError("");
         try {
-            const res = await axios.post(API, 
-                { description: inputValue},
+            const res = await axios.post(API,
+                { description: inputValue },
                 { withCredentials: true }
             );
 
-            setTasks([ res.data.data || res.data ,...tasks]);
+            setTasks([res.data.data || res.data, ...tasks]);
             setInputValue("");
             toast.success("Task added successfully!");
         } catch (err) {
@@ -71,9 +73,9 @@ const InputTask = ({ setToken }) => {
 
     //add enter key handle
     const handleKeyDown = (e) => {
-        if (e.key === "Enter") 
-        addTask();
-        
+        if (e.key === "Enter")
+            addTask();
+
     };
 
     const handleInputChange = (e) => {
@@ -83,27 +85,27 @@ const InputTask = ({ setToken }) => {
 
     //check task
     const toggleTask = async (id) => {
-    const currentTask = tasks.find(task => task._id === id);
-    if (!currentTask) return;
-    const updatedStatus = !currentTask.completed;
-    setTasks(tasks.map(task => 
-        task._id === id ? { ...task, completed: updatedStatus } : task
-    ));
-    toast.success("Task updated successfully!");
-    try {
-        const res = await axios.put(`${API}/${id}`, 
-            { completed: updatedStatus },
-            { withCredentials: true }
-        );
-        setTasks(tasks.map(task => task._id === id ? res.data.data : task));
-    } catch (err) {
-        console.log(err);
-        setTasks(tasks.map(task => 
-            task._id === id ? { ...task, completed: currentTask.completed } : task
+        const currentTask = tasks.find(task => task._id === id);
+        if (!currentTask) return;
+        const updatedStatus = !currentTask.completed;
+        setTasks(tasks.map(task =>
+            task._id === id ? { ...task, completed: updatedStatus } : task
         ));
-        toast.error("Failed to update task!");
-    }
-};
+        toast.success("Task updated successfully!");
+        try {
+            const res = await axios.put(`${API}/${id}`,
+                { completed: updatedStatus },
+                { withCredentials: true }
+            );
+            setTasks(tasks.map(task => task._id === id ? res.data.data : task));
+        } catch (err) {
+            console.log(err);
+            setTasks(tasks.map(task =>
+                task._id === id ? { ...task, completed: currentTask.completed } : task
+            ));
+            toast.error("Failed to update task!");
+        }
+    };
 
 
     const logout = () => {
@@ -125,8 +127,8 @@ const InputTask = ({ setToken }) => {
         })
         if (result.isConfirmed) {
             try {
-                await axios.delete(`${API}/${id}`,  { withCredentials: true })
-                setTasks( tasks.filter(task => task._id !== id));
+                await axios.delete(`${API}/${id}`, { withCredentials: true })
+                setTasks(tasks.filter(task => task._id !== id));
 
                 toast.success("Task deleted successfully!");
 
@@ -156,12 +158,12 @@ const InputTask = ({ setToken }) => {
 
         try {
 
-            const res = await axios.put(`${API}/${id}`, 
-                { description: editValue }, 
+            const res = await axios.put(`${API}/${id}`,
+                { description: editValue },
                 { withCredentials: true }
             );
 
-            setTasks( tasks.map(task => task._id === id ? res.data.data : task ));
+            setTasks(tasks.map(task => task._id === id ? res.data.data : task));
 
             setEditingId(null);
             toast.success("Task Edited Successfuly!");
@@ -220,7 +222,7 @@ const InputTask = ({ setToken }) => {
                 <div className="ml-20">
 
                     <select
-                        
+
                         value={filter}
                         onChange={(e) => setFilter(e.target.value)}
                         className="focus:outline-none appearance-none font-[Baloo] text-white shadow-lg backdrop-blur-md
@@ -256,7 +258,7 @@ const InputTask = ({ setToken }) => {
             <ul className="relative wrap-anywhere flex flex-col items-center pt-4 mt-14  pb-5 h-[calc(100vh-300px)]
     overflow-y-auto overflow-x-hidden">
 
-        {filteredTasks.length === 0 && (
+                {filteredTasks.length === 0 && (
                     <p className="text-white text-2xl font-[Baloo] opacity-60 mt-10">
                         No tasks found.
                     </p>
@@ -273,10 +275,11 @@ const InputTask = ({ setToken }) => {
                             {editingId === task._id ? (
 
                                 <input type="text" value={editValue}
-                                    onChange={(e) => {setEditValue(e.target.value);
+                                    onChange={(e) => {
+                                        setEditValue(e.target.value);
                                         if (editError) setEditError("");
-                                        }}
-                                    
+                                    }}
+
                                     className="ml-5 flex-1  outline-none text-white text-[25px] font-[Baloo]" />
 
                             ) : (
@@ -327,7 +330,7 @@ const InputTask = ({ setToken }) => {
                                         <img src="/delete.png" className="h-6" />
                                     </button>
 
-                                
+
                                 </>
                             )}
                         </div>
