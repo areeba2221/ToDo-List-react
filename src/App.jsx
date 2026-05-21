@@ -17,7 +17,6 @@ const App = () => {
     useEffect(() => {
         const checkAuth = async () => {
             try {
-                localStorage.removeItem('token');
                 await getMe();             
                 setIsAuthenticated(true);
                 setUser(res.data.user); 

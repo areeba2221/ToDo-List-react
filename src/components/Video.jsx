@@ -4,8 +4,7 @@ const Video = () => {
       autoPlay
       muted
       loop
-      className="fixed right-0 bottom-0 min-w-full min-h-full object-cover z-0"
-    >
+      className="fixed right-0 bottom-0 min-w-full min-h-full object-cover z-0">
 
       <source
         src="/ChillhopWhiteOak.mp4"

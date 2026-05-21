@@ -2,8 +2,9 @@ import axios from "axios";
 import swal from "sweetalert2";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { logoutUser, changePassword } from "../api/auth";
 import { useState, useEffect, useRef } from "react";
+import { logoutUser, changePassword } from "../api/auth";
+
 
 const API = `${import.meta.env.VITE_BACKEND_URL}/api/todos`;
 
@@ -18,13 +19,15 @@ const InputTask = ({ setIsAuthenticated, user }) => {
     const [editError, setEditError] = useState("");
     const [filter, setFilter] = useState("all");
 
-    const [dropdownOpen, setDropdownOpen] = useState(false);
+     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [showPassModal, setShowPassModal] = useState(false);
     const [currentPassword, setCurrentPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
     const [confirmNewPassword, setConfirmNewPassword] = useState("");
     const [passLoading, setPassLoading] = useState(false);
     const dropdownRef = useRef(null);
+
+    
 
     //validation of task
     const validateTask = (value) => {
@@ -35,15 +38,15 @@ const InputTask = ({ setIsAuthenticated, user }) => {
     };
 
     //user dropdown handle
-    useEffect(() => {
-        const handleClickOutside = (e) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
-                setDropdownOpen(false);
-            }
-        };
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, []);
+   useEffect(() => {
+          const handleClickOutside = (e) => {
+              if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+                  setDropdownOpen(false);
+              }
+          };
+          document.addEventListener('mousedown', handleClickOutside);
+          return () => document.removeEventListener('mousedown', handleClickOutside);
+      }, []);
 
     //fetch tasks
     useEffect(() => {
@@ -305,180 +308,182 @@ const InputTask = ({ setIsAuthenticated, user }) => {
 
                 </div>
 
-                <div className="ml-10 relative" ref={dropdownRef}>
+<div className="ml-10 relative" ref={dropdownRef}>
 
-                    <button
-                        onClick={() => setDropdownOpen(!dropdownOpen)}
-                        className="w-12 h-12 rounded-full bg-[#C4BABA5E] border border-[#FFFFFFB2]
+    <button
+        onClick={() => setDropdownOpen(!dropdownOpen)}
+        className="w-12 h-12 rounded-full bg-[#C4BABA5E] border border-[#FFFFFFB2]
         shadow-lg backdrop-blur-md flex items-center justify-center
         cursor-pointer hover:bg-[#ffffff30] transition">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26"
-                            viewBox="0 0 24 24" fill="none" stroke="white"
-                            strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <circle cx="12" cy="8" r="4" />
-                            <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
-                        </svg>
-                    </button>
+        <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26"
+            viewBox="0 0 24 24" fill="none" stroke="white"
+            strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="8" r="4" />
+            <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
+        </svg>
+    </button>
 
-                    {dropdownOpen && (
-                        <div className="absolute right-0 mt-3 w-64 rounded-2xl shadow-2xl
+    {dropdownOpen && (
+        <div className="absolute right-0 mt-3 w-64 rounded-2xl shadow-2xl
         bg-white/10 backdrop-blur-xl border border-white/20 z-50 overflow-hidden">
 
-                            <div className="px-5 py-4 border-b border-white/20">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 rounded-full bg-linear-to-r from-[#C4564D] to-[#864B49]
+            <div className="px-5 py-4 border-b border-white/20">
+                <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-linear-to-r from-[#C4564D] to-[#864B49]
                     flex items-center justify-center text-white font-bold text-lg">
-                                        {user?.name?.charAt(0).toUpperCase() || "U"}
-                                    </div>
-                                    <div>
-                                        <p className="text-white font-[Baloo] font-semibold text-[16px] leading-tight">
-                                            {user?.name || "User"}
-                                        </p>
-                                        <p className="text-white/60 font-[Baloo] text-[13px] leading-tight">
-                                            {user?.email || ""}
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
+                        {user?.name?.charAt(0).toUpperCase() || "U"}
+                    </div>
+                    <div>
+                        <p className="text-white font-[Baloo] font-semibold text-[16px] leading-tight">
+                            {user?.name || "User"}
+                        </p>
+                        <p className="text-white/60 font-[Baloo] text-[13px] leading-tight">
+                            {user?.email || ""}
+                        </p>
+                    </div>
+                </div>
+            </div>
 
-                            <div className="px-3 py-2 border-b border-white/20">
-                                <button
-                                    onClick={() => {
-                                        setShowPassModal(true);
-                                        setDropdownOpen(false);
-                                    }}
-                                    className="w-full flex items-center gap-3 px-3 py-2.5
+            <div className="px-3 py-2 border-b border-white/20">
+                <button
+                    onClick={() => {
+                        setShowPassModal(true);
+                        setDropdownOpen(false);
+                    }}
+                    className="w-full flex items-center gap-3 px-3 py-2.5
                     rounded-xl text-white font-[Baloo] text-[15px]
                     hover:bg-white/10 transition cursor-pointer">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
-                                        viewBox="0 0 24 24" fill="none" stroke="white"
-                                        strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                        <circle cx="7.5" cy="15.5" r="5.5" />
-                                        <path d="m21 2-9.6 9.6" />
-                                        <path d="m15.5 7.5 3 3L22 7l-3-3" />
-                                    </svg>
-                                    Change Password
-                                </button>
-                            </div>
+                    {/* Key Icon */}
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                        viewBox="0 0 24 24" fill="none" stroke="white"
+                        strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="7.5" cy="15.5" r="5.5" />
+                        <path d="m21 2-9.6 9.6" />
+                        <path d="m15.5 7.5 3 3L22 7l-3-3" />
+                    </svg>
+                    Change Password
+                </button>
+            </div>
 
-                            <div className="px-3 py-2">
-                                <button
-                                    onClick={logout}
-                                    className="w-full flex items-center gap-3 px-3 py-2.5
+            <div className="px-3 py-2">
+                <button
+                    onClick={logout}
+                    className="w-full flex items-center gap-3 px-3 py-2.5
                     rounded-xl text-red-400 font-[Baloo] text-[15px]
                     hover:bg-red-500/20 transition cursor-pointer">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
-                                        viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                        strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                                        <polyline points="16 17 21 12 16 7" />
-                                        <line x1="21" y1="12" x2="9" y2="12" />
-                                    </svg>
-                                    Logout
-                                </button>
-                            </div>
+                    {/* Logout Icon */}
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                        <polyline points="16 17 21 12 16 7" />
+                        <line x1="21" y1="12" x2="9" y2="12" />
+                    </svg>
+                    Logout
+                </button>
+            </div>
 
-                        </div>
-                    )}
-                </div>
+        </div>
+    )}
+</div>
 
-                {showPassModal && (
-                    <div className="fixed inset-0 z-50 flex items-center justify-center
+{showPassModal && (
+    <div className="fixed inset-0 z-50 flex items-center justify-center
     bg-black/50 backdrop-blur-sm">
-                        <div className="bg-white/10 backdrop-blur-xl border border-white/20
+        <div className="bg-white/10 backdrop-blur-xl border border-white/20
         rounded-2xl shadow-2xl p-8 w-full max-w-md mx-4">
 
-                            <div className="flex items-center justify-between mb-6">
-                                <h3 className="text-white font-[Baloo] text-2xl font-bold">
-                                    Change Password
-                                </h3>
-                                <button
-                                    onClick={() => {
-                                        setShowPassModal(false);
-                                        setCurrentPassword("");
-                                        setNewPassword("");
-                                        setConfirmNewPassword("");
-                                    }}
-                                    className="text-white/60 hover:text-white transition cursor-pointer">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                        viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                        strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                        <path d="M18 6 6 18" /><path d="m6 6 12 12" />
-                                    </svg>
-                                </button>
-                            </div>
+            <div className="flex items-center justify-between mb-6">
+                <h3 className="text-white font-[Baloo] text-2xl font-bold">
+                    Change Password
+                </h3>
+                <button
+                    onClick={() => {
+                        setShowPassModal(false);
+                        setCurrentPassword("");
+                        setNewPassword("");
+                        setConfirmNewPassword("");
+                    }}
+                    className="text-white/60 hover:text-white transition cursor-pointer">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M18 6 6 18" /><path d="m6 6 12 12" />
+                    </svg>
+                </button>
+            </div>
 
-                            <div className="mb-4">
-                                <label className="block text-white/80 font-[Baloo] text-sm mb-1">
-                                    Current Password
-                                </label>
-                                <input
-                                    type="password"
-                                    value={currentPassword}
-                                    onChange={(e) => setCurrentPassword(e.target.value)}
-                                    placeholder="Enter current password"
-                                    className="w-full px-4 py-3 rounded-xl bg-white/10 border
+            <div className="mb-4">
+                <label className="block text-white/80 font-[Baloo] text-sm mb-1">
+                    Current Password
+                </label>
+                <input
+                    type="password"
+                    value={currentPassword}
+                    onChange={(e) => setCurrentPassword(e.target.value)}
+                    placeholder="Enter current password"
+                    className="w-full px-4 py-3 rounded-xl bg-white/10 border
                     border-white/20 text-white font-[Baloo] placeholder-white/40
-                    outline-none focus:border-indigo-400 transition"
-                                />
-                            </div>
+                    outline-none focus:border-[#d3736a] transition"
+                />
+            </div>
 
-                            <div className="mb-4">
-                                <label className="block text-white/80 font-[Baloo] text-sm mb-1">
-                                    New Password
-                                </label>
-                                <input
-                                    type="password"
-                                    value={newPassword}
-                                    onChange={(e) => setNewPassword(e.target.value)}
-                                    placeholder="Enter new password"
-                                    className="w-full px-4 py-3 rounded-xl bg-white/10 border
+            <div className="mb-4">
+                <label className="block text-white/80 font-[Baloo] text-sm mb-1">
+                    New Password
+                </label>
+                <input
+                    type="password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    placeholder="Enter new password"
+                    className="w-full px-4 py-3 rounded-xl bg-white/10 border
                     border-white/20 text-white font-[Baloo] placeholder-white/40
-                    outline-none focus:border-indigo-400 transition"
-                                />
-                            </div>
+                    outline-none focus:border-[#d3736a] transition"
+                />
+            </div>
 
-                            <div className="mb-6">
-                                <label className="block text-white/80 font-[Baloo] text-sm mb-1">
-                                    Confirm New Password
-                                </label>
-                                <input
-                                    type="password"
-                                    value={confirmNewPassword}
-                                    onChange={(e) => setConfirmNewPassword(e.target.value)}
-                                    placeholder="Confirm new password"
-                                    className="w-full px-4 py-3 rounded-xl bg-white/10 border
+            <div className="mb-6">
+                <label className="block text-white/80 font-[Baloo] text-sm mb-1">
+                    Confirm New Password
+                </label>
+                <input
+                    type="password"
+                    value={confirmNewPassword}
+                    onChange={(e) => setConfirmNewPassword(e.target.value)}
+                    placeholder="Confirm new password"
+                    className="w-full px-4 py-3 rounded-xl bg-white/10 border
                     border-white/20 text-white font-[Baloo] placeholder-white/40
-                    outline-none focus:border-indigo-400 transition"
-                                />
-                            </div>
+                    outline-none focus:border-[#d3736a] transition"
+                />
+            </div>
 
-                            <div className="flex gap-3">
-                                <button
-                                    onClick={() => {
-                                        setShowPassModal(false);
-                                        setCurrentPassword("");
-                                        setNewPassword("");
-                                        setConfirmNewPassword("");
-                                    }}
-                                    className="flex-1 py-3 rounded-xl border border-white/20
+            <div className="flex gap-3">
+                <button
+                    onClick={() => {
+                        setShowPassModal(false);
+                        setCurrentPassword("");
+                        setNewPassword("");
+                        setConfirmNewPassword("");
+                    }}
+                    className="flex-1 py-3 rounded-xl border border-white/20
                     text-white font-[Baloo] text-[16px]
                     hover:bg-white/10 transition cursor-pointer">
-                                    Cancel
-                                </button>
-                                <button
-                                    onClick={handleChangePassword}
-                                    disabled={passLoading}
-                                    className="flex-1 py-3 rounded-xl bg-indigo-500/80
+                    Cancel
+                </button>
+                <button
+                    onClick={handleChangePassword}
+                    disabled={passLoading}
+                    className="flex-1 py-3 rounded-xl bg-linear-to-r from-[#C4564D] to-[#864B49]
                     text-white font-[Baloo] text-[16px]
-                    hover:bg-indigo-600 transition cursor-pointer disabled:opacity-60">
-                                    {passLoading ? "Saving..." : "Save Password"}
-                                </button>
-                            </div>
+                    hover:bg-[#d3736a] transition cursor-pointer disabled:opacity-60">
+                    {passLoading ? "Saving..." : "Save Password"}
+                </button>
+            </div>
 
-                        </div>
-                    </div>
-                )}
+        </div>
+    </div>
+)}
 
             </div>
 
