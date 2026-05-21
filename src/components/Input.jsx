@@ -104,23 +104,37 @@ const InputTask = ({ setToken, user }) => {
     };
 
     //toggle task
-    const toggleTask = async (id) => {
+ const toggleTask = async (id) => {
     const currentTask = tasks.find(task => task._id === id);
     if (!currentTask) return;
-    
+
+    const action = currentTask.completed ? "mark as pending" : "mark as completed";
+
+    const result = await swal.fire({
+        title: "Update Task?",
+        text: `Do you want to ${action}?`,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#C4564D',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, update it!'
+    });
+
+    if (!result.isConfirmed) return;
+
     const updatedStatus = !currentTask.completed;
-    
+
     setTasks(prevTasks => prevTasks.map(task =>
         task._id === id ? { ...task, completed: updatedStatus } : task
     ));
     toast.success("Task updated successfully!");
-    
+
     try {
         const res = await axios.put(`${API}/${id}`,
             { completed: updatedStatus },
             { withCredentials: true }
         );
-        setTasks(prevTasks => prevTasks.map(task => 
+        setTasks(prevTasks => prevTasks.map(task =>
             task._id === id ? res.data.data : task
         ));
     } catch (err) {
@@ -210,31 +224,38 @@ const InputTask = ({ setToken, user }) => {
 
     //edit save tasks
     const saveTask = async (id) => {
-        const error = validateTask(editValue);
-        if (error) {
-            toast.error(error);
-            return;
-        }
-        setEditError("");
+    const error = validateTask(editValue);
+    if (error) {
+        toast.error(error);
+        return;
+    }
+    setEditError("");
 
-        try {
+    const result = await swal.fire({
+        title: "Save Changes?",
+        text: "Do you want to save the edited task?",
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#C4564D',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, save it!'
+    });
 
-            const res = await axios.put(`${API}/${id}`,
-                { description: editValue },
-                { withCredentials: true }
-            );
+    if (!result.isConfirmed) return;
 
-            setTasks(tasks.map(task => task._id === id ? res.data.data : task));
-
-            setEditingId(null);
-            toast.success("Task Edited Successfuly!");
-
-        } catch (err) {
-            console.log(err);
-            toast.error("Failed to edit task!")
-        }
-
-    };
+    try {
+        const res = await axios.put(`${API}/${id}`,
+            { description: editValue },
+            { withCredentials: true }
+        );
+        setTasks(tasks.map(task => task._id === id ? res.data.data : task));
+        setEditingId(null);
+        toast.success("Task edited successfully!");
+    } catch (err) {
+        console.log(err);
+        toast.error("Failed to edit task!");
+    }
+};
 
     //cancel edit tasks
     const cancelEdit = () => {
