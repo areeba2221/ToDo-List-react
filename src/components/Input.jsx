@@ -105,27 +105,33 @@ const InputTask = ({ setToken, user }) => {
 
     //toggle task
     const toggleTask = async (id) => {
-        const currentTask = tasks.find(task => task._id === id);
-        if (!currentTask) return;
-        const updatedStatus = !currentTask.completed;
-        setTasks(tasks.map(task =>
-            task._id === id ? { ...task, completed: updatedStatus } : task
+    const currentTask = tasks.find(task => task._id === id);
+    if (!currentTask) return;
+    
+    const updatedStatus = !currentTask.completed;
+    
+    setTasks(prevTasks => prevTasks.map(task =>
+        task._id === id ? { ...task, completed: updatedStatus } : task
+    ));
+    toast.success("Task updated successfully!");
+    
+    try {
+        const res = await axios.put(`${API}/${id}`,
+            { completed: updatedStatus },
+            { withCredentials: true }
+        );
+        setTasks(prevTasks => prevTasks.map(task => 
+            task._id === id ? res.data.data : task
         ));
-        toast.success("Task updated successfully!");
-        try {
-            const res = await axios.put(`${API}/${id}`,
-                { completed: updatedStatus },
-                { withCredentials: true }
-            );
-            setTasks(tasks.map(task => task._id === id ? res.data.data : task));
-        } catch (err) {
-            console.log(err);
-            setTasks(tasks.map(task =>
-                task._id === id ? { ...task, completed: currentTask.completed } : task
-            ));
-            toast.error("Failed to update task!");
-        }
-    };
+    } catch (err) {
+        console.error(err);
+        setTasks(prevTasks => prevTasks.map(task =>
+            task._id === id ? { ...task, completed: currentTask.completed } : task
+        ));
+        toast.error("Failed to update task!");
+    }
+};
+
 
     //change password
     const handleChangePassword = async () => {
