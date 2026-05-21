@@ -8,7 +8,7 @@ import { logoutUser, changePassword } from "../api/auth";
 
 const API = `${import.meta.env.VITE_BACKEND_URL}/api/todos`;
 
-const InputTask = ({ setIsAuthenticated, user }) => {
+const InputTask = ({ setToken, user }) => {
 
     const [isLoading, setIsLoading] = useState(true);
     const [tasks, setTasks] = useState([]);
@@ -164,15 +164,10 @@ const InputTask = ({ setIsAuthenticated, user }) => {
     };
 
     //logout 
-    const logout = async () => {
-        try {
-            await logoutUser();
-            setIsAuthenticated(false);
-        } catch (err) {
-            console.log(err);
-            setIsAuthenticated(false);
-        }
-    };
+    const logout = () => {
+    localStorage.removeItem("token");
+    setToken(null);
+};
 
     //delete tasks
     const deleteTask = async (id) => {
@@ -593,7 +588,7 @@ const InputTask = ({ setIsAuthenticated, user }) => {
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                             viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                             strokeWidth="2" strokeLinecap="round"
-                                            strokeLinejoin="round" class="lucide lucide-x-icon lucide-x">
+                                            strokeLinejoin="round" className="lucide lucide-x-icon lucide-x">
                                             <path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
                                     </button>
 

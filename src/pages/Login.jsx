@@ -2,7 +2,7 @@ import { useState } from "react";
 import { loginUser } from "../api/auth";
 import { Link, useNavigate } from "react-router-dom";
 
-const Login = ({ setIsAuthenticated }) => {
+const Login = ({ setToken }) => {
     const navigate = useNavigate();
 
     const [formData, setFormData] = useState({ email: "", password: "" });
@@ -16,9 +16,10 @@ const Login = ({ setIsAuthenticated }) => {
         e.preventDefault();
 
         try {
-            setLoading(true);
-            await loginUser(formData);
-            setIsAuthenticated(true);
+            
+            const res = await loginUser(formData);
+            localStorage.setItem("token", res.data.token);
+            setToken(res.data.token);
             navigate('/');
         } catch (err) {
             console.log(err);

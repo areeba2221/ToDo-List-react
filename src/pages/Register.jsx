@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 
 
-const Register = (setIsAuthenticated) => {
+const Register = (setToken) => {
     const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
@@ -59,7 +59,8 @@ const Register = (setIsAuthenticated) => {
             await registerUser(dataToSend);
 
             alert("Register Successful");
-            setIsAuthenticated(true);
+            localStorage.setItem("token", res.data.token);
+            setToken(res.data.token);
             navigate('/');
 
         } catch (err) {
