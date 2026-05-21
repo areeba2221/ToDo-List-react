@@ -44,7 +44,8 @@ const App = () => {
 
             <Routes>
 
-                <Route path="/" element={ isAuthenticated ? <InputTask setIsAuthenticated={setIsAuthenticated} user={user} /> : <Navigate to="/login" />}/>
+                <Route path="/" element={ isAuthenticated ? 
+                <InputTask setIsAuthenticated={setIsAuthenticated} user={user} /> : <Navigate to="/login" />}/>
                 <Route path="/login" element={ !isAuthenticated ? <Login setIsAuthenticated={setIsAuthenticated} /> : <Navigate to="/" /> }/>
                 <Route path="/register" element={ !isAuthenticated ? <Register setIsAuthenticated={setIsAuthenticated} /> : <Navigate to="/" /> }/>
 
