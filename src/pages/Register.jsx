@@ -77,7 +77,7 @@ const Register = (setIsAuthenticated) => {
         <div className="relative min-h-screen flex items-center justify-center px-4">
             <div className="max-w-md w-full bg-white rounded-2xl shadow-lg p-8">
 
-                <h2 className="text-3xl font-bold text-center text-gray-800 mb-8">
+                <h2 className="text-3xl font-bold text-center bg-clip-text text-transparent bg-linear-to-r from-[#C4564D] to-[#864B49] mb-8">
                     Create Your Account
                 </h2>
 
@@ -97,7 +97,7 @@ const Register = (setIsAuthenticated) => {
                             value={formData.name}        
                             onChange={handleChange}
                             className="w-full px-4 py-3 border border-gray-300 rounded-lg
-                            focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                            focus:outline-none focus:ring-2 focus:ring-[#d3736a]"
                         />
                     </div>
 
@@ -115,7 +115,7 @@ const Register = (setIsAuthenticated) => {
                             value={formData.email}
                             onChange={handleChange}
                             className="w-full px-4 py-3 border border-gray-300 rounded-lg
-                            focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                            focus:outline-none focus:ring-2 focus:ring-[#d3736a]"
                         />
                     </div>
 
@@ -133,7 +133,7 @@ const Register = (setIsAuthenticated) => {
                             value={formData.password}
                             onChange={handleChange}
                             className="w-full px-4 py-3 border border-gray-300 rounded-lg
-                            focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                            focus:outline-none focus:ring-2 focus:ring-[#d3736a]"
                         />
                     </div>
 
@@ -151,15 +151,15 @@ const Register = (setIsAuthenticated) => {
                             value={formData.confirmPassword}
                             onChange={handleChange}
                             className="w-full px-4 py-3 border border-gray-300 rounded-lg
-                            focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                            focus:outline-none focus:ring-2 focus:ring-[#d3736a]"
                         />
                     </div>
 
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full py-3 rounded-lg text-white bg-indigo-600
-                        hover:bg-indigo-700 transition duration-200 cursor-pointer">
+                        className="w-full py-3 rounded-lg text-white bg-linear-to-r from-[#C4564D] to-[#864B49]
+                        hover:bg-[#d3736a] transition duration-200 cursor-pointer">
                         {loading ? "Creating Account..." : "Register"}
                     </button>
 
@@ -168,7 +168,7 @@ const Register = (setIsAuthenticated) => {
                 <p className="text-center text-gray-600 mt-6">
                     Already have an account?
                     <Link to="/login"
-                        className="text-indigo-600 font-semibold ml-2 hover:underline">
+                        className="text-[#d3736a] font-semibold ml-2 hover:underline">
                         Login
                     </Link>
                 </p>

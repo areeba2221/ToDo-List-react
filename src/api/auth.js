@@ -15,3 +15,6 @@ export const getMe = async () => {
 export const logoutUser = async () => {
     return await axios.post(`${API}/logout`);
 };
+export const changePassword = async (data) => {
+    return await axios.put(`${API}/change-password`, data);
+};

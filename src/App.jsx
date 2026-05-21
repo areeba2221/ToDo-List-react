@@ -12,14 +12,17 @@ import { getMe } from "./api/auth";
 const App = () => {
 
     const [isAuthenticated, setIsAuthenticated] = useState(null);
+    const [user, setUser] = useState(null);
 
     useEffect(() => {
         const checkAuth = async () => {
             try {
                 await getMe();             
-                setIsAuthenticated(true); 
+                setIsAuthenticated(true);
+                setUser(res.data.user); 
             } catch (err) {
-                setIsAuthenticated(false);  
+                setIsAuthenticated(false); 
+                 setUser(null); 
             }
         };
         checkAuth();
@@ -41,7 +44,7 @@ const App = () => {
 
             <Routes>
 
-                <Route path="/" element={ isAuthenticated ? <InputTask setIsAuthenticated={setIsAuthenticated} /> : <Navigate to="/login" />}/>
+                <Route path="/" element={ isAuthenticated ? <InputTask setIsAuthenticated={setIsAuthenticated} user={user} /> : <Navigate to="/login" />}/>
                 <Route path="/login" element={ !isAuthenticated ? <Login setIsAuthenticated={setIsAuthenticated} /> : <Navigate to="/" /> }/>
                 <Route path="/register" element={ !isAuthenticated ? <Register setIsAuthenticated={setIsAuthenticated} /> : <Navigate to="/" /> }/>
 
