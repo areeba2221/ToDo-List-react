@@ -115,7 +115,7 @@ const InputTask = ({ setToken, user }) => {
         text: `Do you want to ${action}?`,
         icon: 'question',
         showCancelButton: true,
-        confirmButtonColor: '#C4564D',
+        confirmButtonColor: '#d33',
         cancelButtonColor: '#3085d6',
         confirmButtonText: 'Yes, update it!'
     });
@@ -236,7 +236,7 @@ const InputTask = ({ setToken, user }) => {
         text: "Do you want to save the edited task?",
         icon: 'question',
         showCancelButton: true,
-        confirmButtonColor: '#C4564D',
+        confirmButtonColor: '#d33',
         cancelButtonColor: '#3085d6',
         confirmButtonText: 'Yes, save it!'
     });
