@@ -22,3 +22,6 @@ export const logoutUser = async () => {
 export const changePassword = async (data) => {
     return await axios.put(`${API}/change-password`, data);
 };
+export const getMe = async () => {
+    return await axios.get(`${API}/me`);
+};
